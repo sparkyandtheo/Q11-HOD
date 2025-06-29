@@ -6,6 +6,12 @@ const equipmentFieldIds = [
     'doorSizeWidthFt', 'doorSizeWidthIn', 'doorSizeHeightFt', 'doorSizeHeightIn'
 ];
 
+/**
+ * Generates dropdown options for feet or inches.
+ * @param {number} max - The maximum value for the dropdown.
+ * @param {string} suffix - Suffix to append to each option (e.g., "'" for feet, '"' for inches).
+ * @returns {string} HTML string of options.
+ */
 function getDropdownOptions(max, suffix = '') {
     let options = '<option value=""></option>';
     for (let i = 0; i <= max; i++) {
@@ -14,9 +20,17 @@ function getDropdownOptions(max, suffix = '') {
     return options;
 }
 
-function getEquipmentPanelHTML(index, doorData) {
+/**
+ * Generates the HTML structure for a single equipment accordion panel.
+ * @param {number} index - The index of the door in the equipment array.
+ * @param {object} doorData - The data for the specific door.
+ * @param {number} totalDoors - The total number of doors, used to determine if this is the last one.
+ * @returns {string} HTML string for the equipment panel.
+ */
+function getEquipmentPanelHTML(index, doorData, totalDoors) {
     const i = index;
-    const isOpen = index === window.appState.currentEquipmentData.length - 1;
+    // Open the last added door by default for better UX
+    const isOpen = index === totalDoors - 1;
 
     return `
         <details class="equipment-accordion" data-equipment-index="${i}" ${isOpen ? 'open' : ''}>
@@ -58,61 +72,94 @@ function getEquipmentPanelHTML(index, doorData) {
     `;
 }
 
-export function renderEquipmentTabs() {
+/**
+ * Renders all equipment tabs (accordions) based on the current equipment data.
+ * It now accepts the currentEquipmentData and a callback for changes.
+ * @param {Array} currentEquipmentData - The array holding all door equipment data.
+ * @param {function} onDataChange - Callback function to notify when equipment data changes (e.g., auto-cache).
+ */
+export function renderEquipmentTabs(currentEquipmentData, onDataChange) {
     const accordionContainer = $('equipment-accordion-container');
     if (!accordionContainer) return;
 
-    const autoSaveHandler = window.appState.handleAutoSave;
+    accordionContainer.innerHTML = ''; // Clear existing accordions
 
-    accordionContainer.innerHTML = ''; 
-
-    if (!window.appState.currentEquipmentData || window.appState.currentEquipmentData.length === 0) {
-        return;
+    if (!currentEquipmentData || currentEquipmentData.length === 0) {
+        return; // No equipment to render
     }
 
-    window.appState.currentEquipmentData.forEach((doorData, index) => {
-        const panelHTML = getEquipmentPanelHTML(index, doorData);
+    currentEquipmentData.forEach((doorData, index) => {
+        // Generate HTML for each panel and insert it
+        const panelHTML = getEquipmentPanelHTML(index, doorData, currentEquipmentData.length);
         accordionContainer.insertAdjacentHTML('beforeend', panelHTML);
         
+        // Find the newly added panel to attach event listeners
         const panel = accordionContainer.querySelector(`[data-equipment-index="${index}"]`);
+        
+        // Populate fields and attach input listeners for each field in the panel
         equipmentFieldIds.forEach(fieldId => {
             const input = panel.querySelector(`[data-field="${fieldId}"]`);
             if (input) {
-                input.value = doorData[fieldId] || '';
+                input.value = doorData[fieldId] || ''; // Set initial value from data
+                
+                // Add event listener for input changes to update state and trigger auto-save
                 input.addEventListener('input', (e) => {
                     const currentPanel = e.target.closest('.equipment-accordion');
                     const currentIdx = parseInt(currentPanel.dataset.equipmentIndex, 10);
                     const field = e.target.dataset.field;
-                    window.appState.currentEquipmentData[currentIdx][field] = e.target.value;
                     
+                    // Update the specific field in the current equipment data array
+                    currentEquipmentData[currentIdx][field] = e.target.value;
+                    
+                    // Update the accordion header if the 'door' field changes
                     if (field === 'door') {
                         const headerSpan = currentPanel.querySelector('summary span');
                         headerSpan.textContent = `Door ${currentIdx + 1}: ${e.target.value || 'New Door'}`;
                     }
-                    autoSaveHandler();
+                    
+                    // Trigger the provided callback (e.g., auto-cache)
+                    onDataChange();
                 });
             }
         });
     });
 }
 
-export function addEquipmentTab() {
+/**
+ * Adds a new empty equipment tab (accordion) to the form.
+ * It now accepts the currentEquipmentData and a callback for changes.
+ * @param {Array} currentEquipmentData - The array holding all door equipment data.
+ * @param {function} onDataChange - Callback function to notify when equipment data changes (e.g., auto-cache).
+ */
+export function addEquipmentTab(currentEquipmentData, onDataChange) {
     const newDoorData = {};
+    // Initialize all fields for the new door as empty strings
     equipmentFieldIds.forEach(id => newDoorData[id] = '');
     
-    if (!Array.isArray(window.appState.currentEquipmentData)) {
-        window.appState.currentEquipmentData = [];
+    // Ensure currentEquipmentData is an array before pushing
+    if (!Array.isArray(currentEquipmentData)) {
+        console.warn('currentEquipmentData is not an array. Initializing as empty array.');
+        currentEquipmentData = [];
     }
     
-    window.appState.currentEquipmentData.push(newDoorData);
-    renderEquipmentTabs();
-    window.appState.handleAutoSave();
+    currentEquipmentData.push(newDoorData); // Add new empty door to the array
+    renderEquipmentTabs(currentEquipmentData, onDataChange); // Re-render all tabs to include the new one
+    onDataChange(); // Trigger auto-cache after adding a new door
 }
 
-export function deleteEquipmentTab(indexToDelete) {
+/**
+ * Deletes an equipment tab (accordion) by its index.
+ * It now accepts the index, currentEquipmentData, and a callback for changes.
+ * @param {number} indexToDelete - The index of the door to delete.
+ * @param {Array} currentEquipmentData - The array holding all door equipment data.
+ * @param {function} onDataChange - Callback function to notify when equipment data changes (e.g., auto-cache).
+ */
+export function deleteEquipmentTab(indexToDelete, currentEquipmentData, onDataChange) {
+    // Confirmation dialog before deletion (consider custom modal instead of native confirm)
     if (!confirm(`Are you sure you want to delete Door ${indexToDelete + 1}?`)) return;
     
-    window.appState.currentEquipmentData.splice(indexToDelete, 1);
-    renderEquipmentTabs();
-    window.appState.handleAutoSave();
+    currentEquipmentData.splice(indexToDelete, 1); // Remove the door from the array
+    renderEquipmentTabs(currentEquipmentData, onDataChange); // Re-render remaining tabs
+    onDataChange(); // Trigger auto-cache after deletion
 }
+
