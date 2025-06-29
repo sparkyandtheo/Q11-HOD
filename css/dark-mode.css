@@ -1,0 +1,186 @@
+/* css/dark-mode.css */
+
+/* --- Base Overrides --- */
+html.dark-mode {
+  --clr-bg: #292524; /* Warm Dark Gray */
+  --clr-text: #d6d3d1; /* Warm Off-white text */
+  --clr-light-gray: #57534e; /* Warm Medium-Gray */
+}
+html.dark-mode h1,
+html.dark-mode h3,
+html.dark-mode legend {
+    color: #fafaf9; /* Warmer white for headings and legends */
+}
+
+/* --- Google Sign-In Button Dark Theme --- */
+html.dark-mode .gsi-material-button {
+  background-color: #1f1f1f;
+  border-color: #8e8e8e;
+  color: #e3e3e3;
+}
+html.dark-mode .gsi-material-button:hover,
+html.dark-mode .gsi-material-button:focus {
+  border-color: #8e8e8e;
+}
+html.dark-mode .gsi-material-button:hover .gsi-material-button-state,
+html.dark-mode .gsi-material-button:focus .gsi-material-button-state {
+  background-color: #e3e3e3;
+  opacity: .08;
+}
+html.dark-mode .gsi-material-button:active .gsi-material-button-state {
+  background-color: #e3e3e3;
+  opacity: .12;
+}
+
+/* --- Form & Input Overrides --- */
+html.dark-mode input, 
+html.dark-mode textarea, 
+html.dark-mode select,
+html.dark-mode .tab-container,
+html.dark-mode .card,
+html.dark-mode .settings-dropdown,
+html.dark-mode .display-field {
+    background-color: #44403c; /* Warmer Dark */
+    color: #f5f5f4;
+    border-color: #57534e;
+}
+html.dark-mode .display-field {
+    background-color: #57534e; /* Darker BG for display fields */
+}
+html.dark-mode input:focus, 
+html.dark-mode textarea:focus, 
+html.dark-mode select:focus {
+    border-color: var(--clr-primary);
+    box-shadow: 0 0 0 3px rgba(79, 143, 207, 0.6);
+}
+
+/* --- Tab Overrides --- */
+html.dark-mode .tab-button {
+    background: #57534e;
+    color: #f5f5f4;
+    border-color: #78716c;
+}
+html.dark-mode .tab-button:hover {
+    background: #78716c;
+    color: #fff;
+}
+html.dark-mode .tab-button.active {
+    background: var(--clr-primary);
+    color: #fff;
+    border-color: var(--clr-primary);
+}
+html.dark-mode .tab-button.active:hover {
+    background: var(--clr-primary-dark);
+}
+
+/* --- TS Number Pseudo-Tab --- */
+html.dark-mode .ts-number-wrapper label {
+    background-color: #3a3a3a;
+    color: #e3e3e3;
+    border-color: #57534e;
+}
+html.dark-mode .ts-number-wrapper input {
+    background-color: #44403c;
+    border-color: #57534e;
+}
+
+/* --- Equipment Accordion Dark --- */
+html.dark-mode .equipment-accordion {
+    border-color: #57534e;
+}
+html.dark-mode .equipment-accordion-header {
+    background-color: #57534e;
+    color: #f5f5f4;
+}
+html.dark-mode .equipment-accordion-header:hover {
+    background-color: #78716c;
+}
+html.dark-mode .equipment-accordion[open] .equipment-accordion-header {
+    border-bottom-color: #78716c;
+}
+html.dark-mode .add-door-button {
+    background-color: #57534e;
+    color: #f5f5f4;
+}
+html.dark-mode .add-door-button:hover {
+    background-color: #78716c;
+}
+
+/* --- Menu & Dropdown Overrides --- */
+html.dark-mode .menu-dropdown {
+    background-color: #44403c;
+    border-color: #57534e;
+}
+html.dark-mode [id="menuDropdown"] button {
+    color: #f5f5f4;
+}
+html.dark-mode [id="menuDropdown"] button:hover {
+    background-color: #57534e;
+}
+html.dark-mode .menu-icon .bar {
+    background-color: #f5f5f4;
+}
+
+html.dark-mode .menu-settings .form-group label {
+    color: #f5f5f4;
+}
+
+html.dark-mode .menu-settings .form-group input[type="password"] {
+    background-color: #57534e;
+    border-color: #78716c;
+}
+
+
+/* --- Search & Summary Overrides --- */
+html.dark-mode .search-results-dropdown {
+    background-color: #44403c;
+    border-color: #57534e;
+}
+html.dark-mode .search-result-item {
+    color: #f5f5f4;
+    border-bottom-color: #57534e;
+}
+html.dark-mode .search-result-item:hover,
+html.dark-mode .search-result-item.active {
+    background-color: #57534e;
+}
+html.dark-mode .summary-container {
+    background: #44403c;
+    border-color: #57534e;
+}
+html.dark-mode .summary-section {
+    border-top-color: #57534e;
+}
+html.dark-mode .summary-item strong {
+    color: #d6d3d1;
+}
+html.dark-mode .summary-item span {
+    color: #a8a29e;
+}
+
+/* --- Misc Component Overrides --- */
+html.dark-mode .doc-id-display {
+    color: #78716c;
+}
+html.dark-mode #mapView {
+    filter: invert(1) hue-rotate(180deg) brightness(.8) contrast(1.2);
+}
+html.dark-mode .location-tab-btn {
+    background: #57534e;
+    border-color: #78716c;
+    color: #f5f5f4;
+}
+html.dark-mode .location-tab-btn.active {
+    background: #44403c;
+    border-bottom-color: #44403c;
+    color: var(--clr-primary);
+}
+html.dark-mode .streetview-error {
+    background-color: #57534e;
+    color: #d6d3d1;
+}
+html.dark-mode .toast {
+    background: #44403c;
+    color: #f5f5f4;
+    border-left-color: var(--clr-primary);
+}

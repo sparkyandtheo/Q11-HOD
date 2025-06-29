@@ -1,0 +1,75 @@
+/* css/review.css */
+
+.review-tab {
+    background-color: var(--clr-info);
+    color: white;
+    font-weight: 700;
+}
+
+.review-tab:hover {
+    background-color: var(--clr-primary-dark);
+}
+
+.diff-container {
+    background-color: var(--clr-bg);
+    border: 1px solid var(--clr-light-gray);
+    border-radius: var(--radius);
+    padding: 1rem;
+    font-family: monospace;
+    white-space: pre-wrap;
+    max-height: 450px;
+    overflow-y: auto;
+}
+
+.diff-container ins {
+    background-color: #d4edda;
+    color: #155724;
+    text-decoration: none;
+}
+
+.diff-container del {
+    background-color: #f8d7da;
+    color: #721c24;
+    text-decoration: none;
+}
+
+.review-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.approve-btn {
+    background-color: var(--clr-success);
+}
+.approve-btn:hover {
+    background-color: #1a9c4a;
+}
+
+.discard-btn {
+    background-color: var(--clr-danger);
+}
+.discard-btn:hover {
+    background-color: var(--clr-danger-hover);
+}
+
+/* Dark Mode Overrides */
+html.dark-mode .review-tab {
+    background-color: var(--clr-info);
+}
+
+html.dark-mode .diff-container {
+    background-color: #2e2a27;
+    border-color: #57534e;
+}
+
+html.dark-mode .diff-container ins {
+    background-color: #1f3c25;
+    color: #a3e9b2;
+}
+
+html.dark-mode .diff-container del {
+    background-color: #4d1f24;
+    color: #f5c6cb;
+}

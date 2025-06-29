@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Overhead Door – Job intake form with versioned changes." />
+  <title>QUASAR 11 (Firebase Edition)</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@500&display=swap" rel="stylesheet">
+  
+  <!-- Modular Stylesheets -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dark-mode.css">
+  <link rel="stylesheet" href="css/search.css">
+
+  <!-- Instantly Apply Dark Mode -->
+  <script>
+    try {
+      const isDarkMode = localStorage.getItem('darkMode') === 'true';
+      if (isDarkMode) {
+        document.documentElement.classList.add('dark-mode');
+      }
+    } catch (e) { console.error('Could not apply dark mode', e); }
+  </script>
+</head>
+<body>
+
+  <!-- Login screen container -->
+  <div id="loginScreen" class="login-screen">
+    <img src="https://www.hamburgdoor.com/templates/custom/hamburgoverhead-2018/images/logo.png" alt="Hamburg Overhead Door Logo" style="max-width: 90%; height: auto; max-height: 80px; border-radius: 8px;">
+    <button id="loginBtn" class="gsi-material-button">
+      <div class="gsi-material-button-state"></div>
+      <div class="gsi-material-button-content-wrapper">
+        <div class="gsi-material-button-icon">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" xmlns:xlink="http://www.w3.org/1999/xlink" style="display: block;">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+            <path fill="none" d="M0 0h48v48H0z"></path>
+          </svg>
+        </div>
+        <span class="gsi-material-button-contents">Sign in with Google</span>
+      </div>
+    </button>
+  </div>
+
+  <!-- Main application container -->
+  <div id="mainAppContainer" style="display: none;">
+    <div style="text-align: center; padding-bottom: 1rem;">
+      <img src="https://www.hamburgdoor.com/templates/custom/hamburgoverhead-2018/images/logo.png" alt="Hamburg Overhead Door Logo" style="max-width: 100%; height: auto; max-height: 70px; border-radius: 8px;">
+    </div>
+    <div class="controls">
+      <div class="controls-main">
+          <button type="button" id="newFormBtnTop">New Form</button>
+          <button type="button" id="saveBtn">Save Record</button>
+          <button type="button" id="genServiceTicketOutputBtn">Service Ticket Output</button>
+          <button type="button" id="genQuoteOutputBtn">Quote Output</button>
+          <button type="button" id="printBtn">🖨️ Print Record</button>
+      </div>
+      
+      <div id="profileSection" class="profile-section" style="display: none;">
+          <div id="userInfo" class="user-info"></div>
+          <div class="menu-container">
+              <div id="menuIcon" class="menu-icon">
+                  <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+              </div>
+              <div id="menuDropdown" class="menu-dropdown">
+                  <div class="menu-settings">
+                      <div class="form-group">
+                          <label for="darkModeToggle">Dark Mode</label>
+                          <input type="checkbox" id="darkModeToggle" class="menu-toggle" />
+                      </div>
+                      <div class="form-group">
+                          <label for="googleMapsApiKey">Maps API Key</label>
+                          <input type="password" id="googleMapsApiKey" placeholder="Enter API Key" />
+                      </div>
+                  </div>
+                  <hr class="menu-divider">
+                  <button type="button" id="logoutBtn">Logout</button>
+              </div>
+          </div>
+      </div>
+    </div>
+  
+    <div class="controls search-container">
+      <div class="search-wrapper">
+        <input type="text" id="searchBox" placeholder="🔍 Search records… (Ctrl+K)" autocomplete="off" />
+        <div id="searchResults" class="search-results-dropdown"></div>
+      </div>
+    </div>
+  
+    <div class="layout">
+      <div class="tab-container">
+        <div class="tab-nav-wrapper">
+          <div class="ts-number-wrapper">
+            <div class="form-group">
+                <label for="tsNumber-main">TS Number</label>
+                <input type="text" id="tsNumber-main" />
+            </div>
+          </div>
+          <div class="tab-nav">
+              <button class="tab-button active" data-tab="meta">Meta</button>
+              <button class="tab-button" data-tab="contact-request">Contact & Request</button>
+              <button class="tab-button" data-tab="equipment">Door/Equipment Info</button>
+              <button class="tab-button" data-tab="payment">Payment</button>
+              <button class="tab-button" data-tab="quote">Quote</button>
+              <button class="tab-button" data-tab="email">Email</button>
+          </div>
+        </div>
+        <div class="tab-content">
+          <form id="intakeForm" novalidate>
+            <div class="tab-panel active" data-tab-content="meta">
+              <div class="doc-id-display full-width"></div>
+              <h3>Job Meta</h3>
+              <div class="form-group">
+                <label for="docId">Document ID</label>
+                <input type="text" id="docId" readonly />
+              </div>
+              <div class="form-group">
+                  <label for="callType">Call Type</label>
+                  <select id="callType">
+                      <option value="Service">Service</option>
+                      <option value="Sales">Sales</option>
+                      <option value="Warranty">Warranty</option>
+                  </select>
+              </div>
+              <div class="form-group">
+                <label for="current-date">Date</label>
+                <input type="text" id="current-date" readonly />
+              </div>
+              <div class="form-group">
+                <label for="current-time">Time</label>
+                <input type="text" id="current-time" readonly />
+              </div>
+              <div class="form-group full-width">
+                <label for="initials">CSR Initials</label>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <input type="text" id="initials" maxlength="3" autocomplete="off" style="flex: 1;" />
+                  <label for="keepInitials" style="display: flex; align-items: center; font-weight: normal; margin-bottom: 0;">
+                    <input type="checkbox" id="keepInitials" style="margin-right: 0.5rem;">
+                    Keep
+                  </label>
+                </div>
+              </div>
+            </div>
+  
+            <div class="tab-panel" data-tab-content="contact-request">
+                <div class="doc-id-display full-width"></div>
+                <h3>Contact & Request</h3>
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" required autocomplete="name" />
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" inputmode="tel" required placeholder="(XXX) XXX-XXXX" />
+                </div>
+                <div class="form-group full-width">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" autocomplete="email" />
+                </div>
+                <div class="form-group full-width">
+                    <label for="billing">Billing Address</label>
+                    <textarea id="billing" rows="3" autocomplete="street-address"></textarea>
+                </div>
+                <div class="form-group full-width" style="margin-top: 1rem;">
+                    <label for="sameAsBilling" style="display: flex; align-items: center; font-weight: normal; margin-bottom: 0.5rem;">
+                        <input type="checkbox" id="sameAsBilling" style="margin-right: 0.5rem;">
+                        Jobsite address is same as billing
+                    </label>
+                    <label for="jobsite" style="font-weight: 600;">Jobsite Address</label>
+                    <textarea id="jobsite" required></textarea>
+                </div>
+                <div class="form-group full-width">
+                    <label for="directions">Directions/Cross Streets</label>
+                    <textarea id="directions" rows="2"></textarea>
+                </div>
+                <div class="form-group full-width">
+                    <label for="availability">Availability</label>
+                    <textarea id="availability" rows="2"></textarea>
+                </div>
+                <div class="form-group full-width">
+                    <label for="request">Work Requested</label>
+                    <textarea id="request" rows="4"></textarea>
+                </div>
+                <div class="form-group full-width">
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" rows="3"></textarea>
+                </div>
+            </div>
+            
+            <div class="tab-panel" data-tab-content="equipment">
+                <div class="doc-id-display full-width"></div>
+                <h3>Door & Equipment Details</h3>
+                <div id="equipment-accordion-container" class="full-width">
+                    <!-- Equipment accordions will be injected here by JS -->
+                </div>
+                <div class="full-width" style="margin-top: 1rem;">
+                    <button type="button" id="add-door-btn" class="add-door-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg>
+                        <span>Add New Door</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="tab-panel" data-tab-content="payment">
+                <div class="doc-id-display full-width"></div>
+                <h3>Payment & Scheduling</h3>
+                <div class="form-group full-width">
+                    <label for="poType">Payment/PO Type</label>
+                    <select id="poType">
+                        <option value="Not Specified">Not Specified</option>
+                        <option value="PO Number">PO Number</option>
+                        <option value="Verbal PO">Verbal PO</option>
+                        <option value="CC on File">CC on File</option>
+                        <option value="COD">COD</option>
+                        <option value="Warranty">Warranty</option>
+                    </select>
+                </div>
+                <div id="poNumberGroup" class="form-group full-width" style="display: none;">
+                    <label for="poNumberInput">PO Number</label>
+                    <input type="text" id="poNumberInput" />
+                </div>
+                <div id="verbalPoGroup" class="form-group full-width" style="display: none;">
+                    <label for="verbalPoInput">Verbal PO From</label>
+                    <input type="text" id="verbalPoInput" placeholder="First and Last of person approving" />
+                </div>
+                <div id="warrantyGroup" class="form-group full-width" style="display: none;">
+                    <fieldset>
+                        <legend>Warranty Details</legend>
+                        <div class="form-group">
+                            <label for="installDate">Install Date</label>
+                            <input type="date" id="installDate" />
+                        </div>
+                        <div class="form-group">
+                            <label for="installer">Installer</label>
+                            <input type="text" id="installer" />
+                        </div>
+                        <div class="form-group">
+                            <label for="warrantyTsNumber">Original TS Number</label>
+                            <input type="text" id="warrantyTsNumber" />
+                        </div>
+                    </fieldset>
+                </div>
+                <div id="cc-info-group" class="form-group full-width" style="display:none">
+                    <fieldset>
+                        <legend>Credit Card Info</legend>
+                        <div class="form-group">
+                            <label for="paymentAccountName">Name on Card</label>
+                            <input type="text" id="paymentAccountName" autocomplete="cc-name" />
+                        </div>
+                        <div class="form-group">
+                            <label for="paymentAccountNumber">Card Number</label>
+                            <input type="text" id="paymentAccountNumber" autocomplete="off" />
+                        </div>
+                        <div class="form-group">
+                            <label for="paymentExpDate">Expiration Date</label>
+                            <input type="text" id="paymentExpDate" placeholder="MM/YY" autocomplete="cc-exp" pattern="(0[1-9]|1[0-2])\/\d{2}" />
+                        </div>
+                        <div class="form-group">
+                            <label for="paymentSecurityCode">Security Code</label>
+                            <input type="text" id="paymentSecurityCode" autocomplete="off" pattern="\d{3,4}" maxlength="4" />
+                        </div>
+                         <div class="form-group full-width">
+                            <label for="billingChanges">Billing Address Changes</label>
+                            <textarea id="billingChanges"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" id="paymentPdfBtn">Generate Payment PDF</button>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="form-group">
+                    <label for="depositAmount">Deposit Amount</label>
+                    <input type="text" id="depositAmount" />
+                </div>
+                <div class="form-group">
+                    <label for="remainingBalance">Remaining Balance</label>
+                    <input type="text" id="remainingBalance" />
+                </div>
+                <div class="form-group">
+                    <label for="receiptMethod">Receipt Method</label>
+                    <select id="receiptMethod">
+                        <option>Email</option>
+                        <option>Mail</option>
+                        <option>None</option>
+                    </select>
+                </div>
+                 <div class="form-group">
+                    <label for="tsNumber">Legacy TS Number</label>
+                    <input type="text" id="tsNumber" />
+                </div>
+            </div>
+  
+            <div class="tab-panel" data-tab-content="quote">
+                <div class="doc-id-display full-width"></div>
+                <h3>Quote Details</h3>
+                <fieldset class="full-width">
+                    <legend>Contact Info (from Contact tab)</legend>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <div id="quote-contact-name" class="display-field"></div>
+                    </div>
+                     <div class="form-group">
+                        <label>Phone</label>
+                        <div id="quote-contact-phone" class="display-field"></div>
+                    </div>
+                     <div class="form-group full-width">
+                        <label>Email</label>
+                        <div id="quote-contact-email" class="display-field"></div>
+                    </div>
+                </fieldset>
+                <div class="form-group full-width">
+                    <label for="siteSpecs">Site Specs</label>
+                    <textarea id="siteSpecs" rows="3"></textarea>
+                </div>
+                <div class="form-group full-width">
+                    <label for="wePropose">We Propose</label>
+                    <textarea id="wePropose" rows="5"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="leadTime">Lead Time</label>
+                    <input type="text" id="leadTime" />
+                </div>
+                <div class="form-group">
+                    <label for="quotedAmount">Quoted Amount</label>
+                    <input type="text" id="quotedAmount" />
+                </div>
+            </div>
+
+            <div class="tab-panel" data-tab-content="email">
+              <div class="doc-id-display full-width"></div>
+              <h3>Email Customer</h3>
+              <fieldset class="full-width">
+                  <legend>Email Actions</legend>
+                  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                     <button type="button" id="emailQuoteBtn">Send Quote</button>
+                     <button type="button" id="emailInvoiceBtn">Send Invoice</button>
+                     <button type="button" id="emailDepositBtn">Send Deposit Receipt</button>
+                  </div>
+                </fieldset>
+            </div>
+  
+            <pre id="output" class="full-width" style="white-space:pre-wrap;margin-top:1rem; min-height: 100px; display: none;"></pre>
+          </form>
+        </div>
+      </div>
+  
+      <div>
+        <div id="location-visuals-container" style="display:none;">
+             <div class="location-tabs">
+                <button class="location-tab-btn active" data-view="map">Map</button>
+                <button class="location-tab-btn" data-view="streetview">Street View</button>
+            </div>
+            <div class="location-content">
+                <iframe id="mapView" src="" loading="lazy" allowfullscreen></iframe>
+                <img id="streetViewImg" src="" alt="Google Street View" style="display:none;"/>
+            </div>
+        </div>
+        
+        <div id="summary-container" class="summary-container" style="display: none;">
+          <h3>Record Summary</h3>
+          <div id="summary-content" class="summary-content"></div>
+        </div>
+      </div>
+    </div>
+      
+    <div id="autosave-container" style="text-align: center; margin-top: 1rem; height: 24px;"></div>
+    
+    <div id="toast-container"></div>
+  </div>
+    <!-- External libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- The single entry point for the entire application -->
+    <script type="module" src="js/main.js"></script>
+
+</body>
+</html>
