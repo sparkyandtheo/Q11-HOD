@@ -2,18 +2,25 @@
 
 /**
  * A shorthand for document.getElementById.
+ * Exposed globally for convenience in console/debugging.
  * @param {string} id The ID of the element to find.
  * @returns {HTMLElement}
  */
 export const $ = id => document.getElementById(id);
+// Attach to window for global access, e.g., in console
+window.$ = $; 
 
 /**
  * Shows a toast notification message.
+ * Exposed globally for convenience in console/debugging.
  * @param {string} msg The message to display.
  */
 export function notify(msg) {
     const container = $('toast-container');
-    if (!container) return;
+    if (!container) {
+        console.warn('Toast container not found. Notification not displayed:', msg);
+        return;
+    }
     const n = document.createElement('div');
     n.className = 'toast';
     n.textContent = msg;
@@ -24,6 +31,8 @@ export function notify(msg) {
         n.remove();
     }, 5000);
 }
+// Attach to window for global access
+window.notify = notify;
 
 /**
  * Generates a unique ID based on the current timestamp.
@@ -39,3 +48,4 @@ export function generateUniqueId() {
     const seconds = String(now.getSeconds()).padStart(2, '0');
     return `DOC-${year}${month}${day}-${hours}${minutes}${seconds}`;
 }
+
